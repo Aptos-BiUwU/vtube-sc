@@ -14,22 +14,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aptos-labs/aptos-client@npm:^0.1.0":
-  version: 0.1.0
-  resolution: "@aptos-labs/aptos-client@npm:0.1.0"
+"@aptos-labs/aptos-client@npm:^0.1.1":
+  version: 0.1.1
+  resolution: "@aptos-labs/aptos-client@npm:0.1.1"
   dependencies:
-    axios: "npm:1.6.2"
+    axios: "npm:1.7.4"
     got: "npm:^11.8.6"
-  checksum: 10c0/d4076dca4d23f9945ba68ff9c879c6a3e0084a237eb43f17c0d7ade7584d612d2b7fee42cb45c81e3f2264d050b3dfcf6749d357c96ac473a4977a6a1cf20e7e
+  checksum: 10c0/779acbb0139ee12dfec9d9aeb3bc00691ce611c9bd28d090b5d56efc347e24643b72b4c061d138cc05a11b61712d84af17dfc9bcd0b2cab4687d12b7ab6aa1f7
   languageName: node
   linkType: hard
 
-"@aptos-labs/ts-sdk@npm:^1.27.0":
-  version: 1.27.0
-  resolution: "@aptos-labs/ts-sdk@npm:1.27.0"
+"@aptos-labs/ts-sdk@npm:^1.28.0":
+  version: 1.28.0
+  resolution: "@aptos-labs/ts-sdk@npm:1.28.0"
   dependencies:
     "@aptos-labs/aptos-cli": "npm:^0.2.0"
-    "@aptos-labs/aptos-client": "npm:^0.1.0"
+    "@aptos-labs/aptos-client": "npm:^0.1.1"
     "@noble/curves": "npm:^1.4.0"
     "@noble/hashes": "npm:^1.4.0"
     "@scure/bip32": "npm:^1.4.0"
@@ -39,7 +39,7 @@ __metadata:
     js-base64: "npm:^3.7.7"
     jwt-decode: "npm:^4.0.0"
     poseidon-lite: "npm:^0.2.0"
-  checksum: 10c0/aab06dd4ae6a8781cc144c7340d23067af7416ec452421264226082bcefbec20e0c3ad215e761a02149ae41a0eef817e563e280cae66910936af2a3a84caadc2
+  checksum: 10c0/15bb4db85f17c9a1bc495dd7c79f709f0d6a957d5a1cdeb674bddf5acba66e98f1df5d0fd51033e7f19ec90039f4e7bac901d5e906a7599ee6bd55b2410eb8f0
   languageName: node
   linkType: hard
 
@@ -251,14 +251,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:1.6.2":
-  version: 1.6.2
-  resolution: "axios@npm:1.6.2"
+"axios@npm:1.7.4":
+  version: 1.7.4
+  resolution: "axios@npm:1.7.4"
   dependencies:
-    follow-redirects: "npm:^1.15.0"
+    follow-redirects: "npm:^1.15.6"
     form-data: "npm:^4.0.0"
     proxy-from-env: "npm:^1.1.0"
-  checksum: 10c0/9b77e030e85e4f9cbcba7bb52fbff67d6ce906c92d213e0bd932346a50140faf83733bf786f55bd58301bd92f9973885c7b87d6348023e10f7eaf286d0791a1d
+  checksum: 10c0/5ea1a93140ca1d49db25ef8e1bd8cfc59da6f9220159a944168860ad15a2743ea21c5df2967795acb15cbe81362f5b157fdebbea39d53117ca27658bab9f7f17
   languageName: node
   linkType: hard
 
@@ -362,13 +362,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"follow-redirects@npm:^1.15.0":
-  version: 1.15.6
-  resolution: "follow-redirects@npm:1.15.6"
+"follow-redirects@npm:^1.15.6":
+  version: 1.15.9
+  resolution: "follow-redirects@npm:1.15.9"
   peerDependenciesMeta:
     debug:
       optional: true
-  checksum: 10c0/9ff767f0d7be6aa6870c82ac79cf0368cd73e01bbc00e9eb1c2a16fbb198ec105e3c9b6628bb98e9f3ac66fe29a957b9645bcb9a490bb7aa0d35f908b6b85071
+  checksum: 10c0/5829165bd112c3c0e82be6c15b1a58fa9dcfaede3b3c54697a82fe4a62dd5ae5e8222956b448d2f98e331525f05d00404aba7d696de9e761ef6e42fdc780244f
   languageName: node
   linkType: hard
 
@@ -648,7 +648,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "vtube-sc@workspace:."
   dependencies:
-    "@aptos-labs/ts-sdk": "npm:^1.27.0"
+    "@aptos-labs/ts-sdk": "npm:^1.28.0"
     "@types/node": "npm:^22.4.1"
     dotenv: "npm:^16.4.5"
     ts-node: "npm:^10.9.2"
