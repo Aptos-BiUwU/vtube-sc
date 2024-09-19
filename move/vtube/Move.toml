@@ -1,0 +1,17 @@
+[package]
+name = "vtube"
+version = "1.0.0"
+authors = []
+
+[addresses]
+vtube = "82c58d40594a8eb219850cd08493d7b1e01335e30d506950ffbb3a1ff3980abe"
+test_coins = "0xfefe"
+
+[dev-addresses]
+
+[dependencies.AptosFramework]
+git = "https://github.com/aptos-labs/aptos-core.git"
+rev = "mainnet"
+subdir = "aptos-move/framework/aptos-framework"
+
+[dev-dependencies]

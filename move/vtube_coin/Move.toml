@@ -1,0 +1,17 @@
+[package]
+name = "vtube_coin"
+version = "1.0.0"
+authors = []
+
+[addresses]
+vtube_admin = "0x82c58d40594a8eb219850cd08493d7b1e01335e30d506950ffbb3a1ff3980abe"
+vtube_coin = "0x1d9c6264a2193f03a3a202ad69951034cea73a0c894837d39437e00b05c657a9"
+
+[dev-addresses]
+
+[dependencies.AptosFramework]
+git = "https://github.com/aptos-labs/aptos-core.git"
+rev = "mainnet"
+subdir = "aptos-move/framework/aptos-framework"
+
+[dev-dependencies]
