@@ -1,4 +1,3 @@
-/// @notice Creates subscriptions with different coin types and tiers
 module vtube::subscription {
     use std::signer;
     use std::vector;
@@ -24,7 +23,7 @@ module vtube::subscription {
         start_times: Table<address, u64>
     }
 
-    public fun create_subscription_plan<CoinType>(
+    public entry fun create_subscription_plan<CoinType>(
         caller: &signer, prices: vector<u64>, period: u64
     ) {
         check_admin(caller);
@@ -43,36 +42,35 @@ module vtube::subscription {
     }
 
     public fun deposit<CoinType>(
-        caller: &signer, coin: Coin<BiUwU>
+        dst_addr: address, biuwu_coin: Coin<BiUwU>
     ) acquires SubscriptionManagement {
         let subscription_management =
             borrow_global_mut<SubscriptionManagement<CoinType>>(@vtube);
         let balance =
             table::borrow_mut_with_default(
-                &mut subscription_management.balances, signer::address_of(caller), 0
+                &mut subscription_management.balances, dst_addr, 0
             );
-        *balance = *balance + coin::value(&coin);
-        coin::deposit(@vtube, coin);
+        *balance = *balance + coin::value(&biuwu_coin);
+        coin::deposit(@vtube, biuwu_coin);
     }
 
     public fun update_tier<CoinType>(
-        caller: &signer, new_tier: u64
+        dst_addr: address, new_tier: u64
     ) acquires SubscriptionManagement {
-        let caller_addr = signer::address_of(caller);
         let subscription_management =
             borrow_global_mut<SubscriptionManagement<CoinType>>(@vtube);
         let balance =
             table::borrow_mut_with_default(
-                &mut subscription_management.balances, caller_addr, 0
+                &mut subscription_management.balances, dst_addr, 0
             );
         let tier =
             table::borrow_mut_with_default(
-                &mut subscription_management.tiers, caller_addr, 0
+                &mut subscription_management.tiers, dst_addr, 0
             );
         let start_time =
             table::borrow_mut_with_default(
                 &mut subscription_management.start_times,
-                caller_addr,
+                dst_addr,
                 timestamp::now_microseconds()
             );
         if (new_tier > *tier) {
@@ -89,16 +87,18 @@ module vtube::subscription {
     }
 
     #[view]
-    public fun is_active<CoinType>(user: address): bool acquires SubscriptionManagement {
+    public fun is_active<CoinType>(dst_addr: address): bool acquires SubscriptionManagement {
         let subscription_management =
             borrow_global<SubscriptionManagement<CoinType>>(@vtube);
         let balance =
-            table::borrow_with_default(&subscription_management.balances, user, &0);
-        let tier = table::borrow_with_default(&subscription_management.tiers, user, &0);
+            table::borrow_with_default(&subscription_management.balances, dst_addr, &0);
+        let tier = table::borrow_with_default(
+            &subscription_management.tiers, dst_addr, &0
+        );
         let start_time =
             table::borrow_with_default(
                 &subscription_management.start_times,
-                user,
+                dst_addr,
                 &timestamp::now_microseconds()
             );
         let num_periods =

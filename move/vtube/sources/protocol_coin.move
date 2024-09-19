@@ -1,5 +1,4 @@
 module vtube::protocol_coin {
-    use std::string::utf8;
     use std::signer;
 
     use aptos_framework::managed_coin;

@@ -1,7 +1,5 @@
 #[test_only]
 module vtube::test_coins {
-    use std::string::utf8;
-
     use aptos_framework::managed_coin;
 
     struct VtubeCoin {}
