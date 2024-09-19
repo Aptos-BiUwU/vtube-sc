@@ -1,13 +1,13 @@
 #[test_only]
-module vtube::test_coins {
+module biuwu::test_coins {
     use aptos_framework::managed_coin;
 
-    struct VtubeCoin {}
+    struct VtuberCoin {}
 
     public entry fun create_coin(account: &signer) {
-        managed_coin::initialize<VtubeCoin>(
+        managed_coin::initialize<VtuberCoin>(
             account,
-            b"VtubeCoin",
+            b"VtuberCoin",
             b"VTC",
             6,
             false

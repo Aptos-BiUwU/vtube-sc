@@ -1,4 +1,4 @@
-module vtube::protocol_coin {
+module biuwu::biuwu_coin {
     use std::signer;
 
     use aptos_framework::managed_coin;
@@ -22,6 +22,6 @@ module vtube::protocol_coin {
     }
 
     fun check_admin(caller: &signer) {
-        assert!(signer::address_of(caller) == @vtube, ERR_UNAUTHORIZED_CALLER);
+        assert!(signer::address_of(caller) == @biuwu, ERR_UNAUTHORIZED_CALLER);
     }
 }

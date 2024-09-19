@@ -1,11 +1,11 @@
 [package]
-name = "vtube"
+name = "vtuber_coin"
 version = "1.0.0"
 authors = []
 
 [addresses]
-vtube = "82c58d40594a8eb219850cd08493d7b1e01335e30d506950ffbb3a1ff3980abe"
-test_coins = "0xfefe"
+biuwu_admin = "0x0d028638cbfe44d92bb686130abeadbafbce777eb5cc8b75e3d08e835370c59f"
+vtuber_coin = "_"
 
 [dev-addresses]
 

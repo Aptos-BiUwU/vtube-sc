@@ -1,11 +1,11 @@
 {
-  "name": "vtube-sc",
+  "name": "biuwu-sc",
   "packageManager": "yarn@4.4.0",
   "devDependencies": {
     "@aptos-labs/ts-sdk": "^1.28.0",
-    "@types/node": "^22.4.1",
+    "@types/node": "^22.5.5",
     "dotenv": "^16.4.5",
     "ts-node": "^10.9.2",
-    "typescript": "^5.5.4"
+    "typescript": "^5.6.2"
   }
 }

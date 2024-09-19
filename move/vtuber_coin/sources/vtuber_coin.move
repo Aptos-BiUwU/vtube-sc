@@ -1,28 +1,23 @@
 /// @notice Provides a function for creating coin
-module vtube_coin::vtube_coin {
+module vtuber_coin::vtuber_coin {
     use std::signer;
     use std::string::String;
 
     use aptos_framework::managed_coin::{Self, Capabilities};
 
-    struct VtubeCoin {}
+    struct VtuberCoin {}
 
     public entry fun create_coin(
         caller: &signer,
         name: vector<u8>,
-        symbol: vector<u8>,
-        total_supply: u64
+        symbol: vector<u8>
     ) {
-        managed_coin::initialize<VtubeCoin>(
+        managed_coin::initialize<VtuberCoin>(
             caller,
             name,
             symbol,
             6,
             false
         );
-    }
-
-    public entry fun mint(caller: &signer, dst_addr: address, amount: u64) acquires Capabilities {
-        managed_coin::mint<VtubeCoin>(caller, dst_addr, amount);
     }
 }

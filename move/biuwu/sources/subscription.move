@@ -1,4 +1,4 @@
-module vtube::subscription {
+module biuwu::subscription {
     use std::signer;
     use std::vector;
 
@@ -7,7 +7,7 @@ module vtube::subscription {
 
     use aptos_std::table::{Self, Table};
 
-    use vtube::protocol_coin::{BiUwU};
+    use biuwu::biuwu_coin::{BiUwU};
 
     /// @notice Error code for unauthorized caller
     const ERR_UNAUTHORIZED_CALLER: u64 = 1;
@@ -45,20 +45,20 @@ module vtube::subscription {
         dst_addr: address, biuwu_coin: Coin<BiUwU>
     ) acquires SubscriptionManagement {
         let subscription_management =
-            borrow_global_mut<SubscriptionManagement<CoinType>>(@vtube);
+            borrow_global_mut<SubscriptionManagement<CoinType>>(@biuwu);
         let balance =
             table::borrow_mut_with_default(
                 &mut subscription_management.balances, dst_addr, 0
             );
         *balance = *balance + coin::value(&biuwu_coin);
-        coin::deposit(@vtube, biuwu_coin);
+        coin::deposit(@biuwu, biuwu_coin);
     }
 
     public fun update_tier<CoinType>(
         dst_addr: address, new_tier: u64
     ) acquires SubscriptionManagement {
         let subscription_management =
-            borrow_global_mut<SubscriptionManagement<CoinType>>(@vtube);
+            borrow_global_mut<SubscriptionManagement<CoinType>>(@biuwu);
         let balance =
             table::borrow_mut_with_default(
                 &mut subscription_management.balances, dst_addr, 0
@@ -89,7 +89,7 @@ module vtube::subscription {
     #[view]
     public fun is_active<CoinType>(dst_addr: address): bool acquires SubscriptionManagement {
         let subscription_management =
-            borrow_global<SubscriptionManagement<CoinType>>(@vtube);
+            borrow_global<SubscriptionManagement<CoinType>>(@biuwu);
         let balance =
             table::borrow_with_default(&subscription_management.balances, dst_addr, &0);
         let tier = table::borrow_with_default(
@@ -111,7 +111,7 @@ module vtube::subscription {
     }
 
     fun check_admin(caller: &signer) {
-        assert!(signer::address_of(caller) == @vtube, ERR_UNAUTHORIZED_CALLER);
+        assert!(signer::address_of(caller) == @biuwu, ERR_UNAUTHORIZED_CALLER);
     }
 
     fun ceil_div_u64(x: u64, y: u64): u64 {

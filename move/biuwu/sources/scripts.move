@@ -1,11 +1,11 @@
-module vtube::scripts {
+module biuwu::scripts {
     use std::signer;
 
     use aptos_framework::coin;
 
-    use vtube::subscription;
-    use vtube::protocol_coin::{BiUwU};
-    use vtube::battle;
+    use biuwu::subscription;
+    use biuwu::biuwu_coin::{BiUwU};
+    use biuwu::battle;
 
     public entry fun deposit<CoinType>(caller: &signer, value: u64) {
         let biuwu_coin = coin::withdraw<BiUwU>(caller, value);
