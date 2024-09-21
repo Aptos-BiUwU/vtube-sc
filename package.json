@@ -1,5 +1,6 @@
 {
   "name": "biuwu-sc",
+  "version": "1.0.1",
   "packageManager": "yarn@4.4.0",
   "devDependencies": {
     "@aptos-labs/ts-sdk": "^1.28.0",
