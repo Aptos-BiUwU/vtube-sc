@@ -1,6 +1,8 @@
 #[test_only]
 module biuwu::test_coins {
     use aptos_framework::managed_coin;
+    
+    use biuwu::biuwu_coin::BiUwU;
 
     struct VtuberCoin {}
 
@@ -12,5 +14,6 @@ module biuwu::test_coins {
             6,
             false
         );
+        managed_coin::register<VtuberCoin>(account);
     }
 }

@@ -17,5 +17,6 @@ module vtuber_coin::vtuber_coin {
             6,
             false
         );
+        managed_coin::register<VtuberCoin>(caller);
     }
 }

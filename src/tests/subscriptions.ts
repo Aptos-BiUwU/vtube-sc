@@ -1,37 +1,35 @@
 import {
-  createBiUwU,
+  initialize,
   createSubscriptionPlan,
   mintBiUwU,
   updateSubscriptionPlan,
 } from "../admin";
-import { getDepositTx, getUpdateTierTx } from "../transaction";
+import { getDepositTx, getUpdateTierTx } from "../transactions";
 import { getAdminAccount, submitTx } from "../util";
 import { viewIsActive } from "../view";
 
-require("dotenv").config();
-
 async function test() {
-  // await createSubscriptionPlan(
-  //   "0x5c7e74cba10d056ecc53fd3c7f99bb1b0bfcf241a566d126206fed11785e30b5",
-  //   [0, 10, 20, 30],
-  //   30,
-  // );
+  await createSubscriptionPlan(
+    "0x5c7e74cba10d056ecc53fd3c7f99bb1b0bfcf241a566d126206fed11785e30b5",
+    [0, 10, 20, 30],
+    30,
+  );
   await updateSubscriptionPlan(
     "0x5c7e74cba10d056ecc53fd3c7f99bb1b0bfcf241a566d126206fed11785e30b5",
     [0, 100, 200, 300],
-    30,
+    3600000,
   );
 
   const adminAccount = getAdminAccount();
 
-  // await createBiUwU();
-  // await mintBiUwU(adminAccount.accountAddress.toString(), 1000);
-  // const depositTx = await getDepositTx(
-  //   adminAccount.accountAddress.toString(),
-  //   "0x5c7e74cba10d056ecc53fd3c7f99bb1b0bfcf241a566d126206fed11785e30b5",
-  //   200,
-  // );
-  // await submitTx(adminAccount, depositTx);
+  await initialize();
+  await mintBiUwU(adminAccount.accountAddress.toString(), 1000);
+  const depositTx = await getDepositTx(
+    adminAccount.accountAddress.toString(),
+    "0x5c7e74cba10d056ecc53fd3c7f99bb1b0bfcf241a566d126206fed11785e30b5",
+    200,
+  );
+  await submitTx(adminAccount, depositTx);
 
   const updateTierTx = await getUpdateTierTx(
     adminAccount.accountAddress.toString(),

@@ -9,6 +9,9 @@ import {
 } from "../util";
 import { Account } from "@aptos-labs/ts-sdk";
 import { readFile, writeFile } from "fs/promises";
+import { getRegisterBiUwUTx } from "../transactions";
+
+const adminAccount = getAdminAccount();
 
 export async function createCoin(name: string, symbol: string) {
   const coinAccount = Account.generate();
@@ -27,7 +30,7 @@ export async function createCoin(name: string, symbol: string) {
   );
   await publishPackage(coinAccount, metadataBytes, moduleBytecode);
 
-  const tx = await aptos.transaction.build.simple({
+  let tx = await aptos.transaction.build.simple({
     sender: coinAccount.accountAddress,
     data: {
       function: `${coinAccount.accountAddress}::vtuber_coin::initialize`,
@@ -43,6 +46,9 @@ export async function createCoin(name: string, symbol: string) {
     privateKey: coinAccount.privateKey.toString(),
   });
   await writeFile("coin-accounts-list.json", JSON.stringify(jsonData, null, 2));
+
+  tx = await getRegisterBiUwUTx(coinAccount.accountAddress.toString());
+  await submitTx(coinAccount, tx);
 
   return coinAccount.privateKey.toString();
 }
@@ -64,20 +70,7 @@ export async function mintCoin(
   await submitTx(coinAccount, tx);
 }
 
-export async function createBiUwU() {
-  const adminAccount = getAdminAccount();
-  const tx = await aptos.transaction.build.simple({
-    sender: adminAccount.accountAddress,
-    data: {
-      function: `${adminAccount.accountAddress}::biuwu_coin::initialize`,
-      functionArguments: [],
-    },
-  });
-  await submitTx(adminAccount, tx);
-}
-
 export async function mintBiUwU(userAddress: string, amount: number) {
-  const adminAccount = getAdminAccount();
   const tx = await aptos.transaction.build.simple({
     sender: adminAccount.accountAddress,
     data: {

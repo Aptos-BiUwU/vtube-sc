@@ -1,8 +1,16 @@
 {
   "coinAccounts": [
     {
-      "address": "0xe5bcf6bd3fe7328a16ad5dff367488fab0bcb9dfb07845b0ac595805667eb9be",
-      "privateKey": "0xe97c6095b93f4389d43194a7f4510f6392b3be9ee589f463a807d64155e3aea6"
+      "address": "0x34470f6a35c0d2e7e44f25d50077b5ef43b6b0c0e8b1304ddb0fe085d4f9b5a8",
+      "privateKey": "0xa55e967faaf63dd8f66fc298dabac0984f477a7bdf4f79816668b663d497afde"
+    },
+    {
+      "address": "0x317f016c3056445b2365702f726dcc10488bebc6281756842cd98601bc3bbbd1",
+      "privateKey": "0x0fd9ebd0ba2674bd3f7e7d946af5b9378630b380886205a74a6a10a8294f7aae"
+    },
+    {
+      "address": "0x1b85bb3946a2b64ea269a058af16b59c527fe07fece766777ad67330581f34a1",
+      "privateKey": "0x41176f0c35f5ebbd0195795858b7b49b73ea72bca9d73778470c84619dd56147"
     }
   ]
 }

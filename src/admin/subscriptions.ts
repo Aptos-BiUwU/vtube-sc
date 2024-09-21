@@ -1,12 +1,12 @@
-import { aptos, submitTx } from "../util";
-import { getAdminAccount } from "../util";
+import { aptos, submitTx, getAdminAccount } from "../util";
+
+const adminAccount = getAdminAccount();
 
 export async function createSubscriptionPlan(
   coinAddress: string,
   prices: number[],
   period: number,
 ) {
-  const adminAccount = getAdminAccount();
   const tx = await aptos.transaction.build.simple({
     sender: adminAccount.accountAddress,
     data: {
@@ -23,7 +23,6 @@ export async function updateSubscriptionPlan(
   prices: number[],
   period: number,
 ) {
-  const adminAccount = getAdminAccount();
   const tx = await aptos.transaction.build.simple({
     sender: adminAccount.accountAddress,
     data: {

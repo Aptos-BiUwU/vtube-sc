@@ -81,7 +81,11 @@ module biuwu::subscriptions {
                     *vector::borrow(&subscription_plan.prices, *tier),
                     subscription_plan.period
                 );
-            *balance = *balance - used_amount;
+            if (*balance > used_amount) {
+                *balance = *balance - used_amount;
+            } else {
+                *balance = 0;
+            };
         };
         *tier = new_tier;
         *start_time = timestamp::now_microseconds();
