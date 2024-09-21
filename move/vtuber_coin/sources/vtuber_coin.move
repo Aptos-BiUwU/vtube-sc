@@ -7,10 +7,8 @@ module vtuber_coin::vtuber_coin {
 
     struct VtuberCoin {}
 
-    public entry fun create_coin(
-        caller: &signer,
-        name: vector<u8>,
-        symbol: vector<u8>
+    public entry fun initialize(
+        caller: &signer, name: vector<u8>, symbol: vector<u8>
     ) {
         managed_coin::initialize<VtuberCoin>(
             caller,

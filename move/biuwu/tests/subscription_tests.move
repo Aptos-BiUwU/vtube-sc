@@ -1,5 +1,5 @@
 #[test_only]
-module biuwu::subscription_tests {
+module biuwu::subscriptions_tests {
     use std::signer;
 
     use aptos_framework::coin;
@@ -7,7 +7,7 @@ module biuwu::subscription_tests {
     use aptos_framework::timestamp;
 
     use biuwu::test_coins::{Self, VtuberCoin};
-    use biuwu::subscription;
+    use biuwu::subscriptions;
     use biuwu::biuwu_coin::{Self, BiUwU};
     use biuwu::scripts;
 
@@ -22,7 +22,7 @@ module biuwu::subscription_tests {
         aptos_framework::account::create_account_for_test(biuwu_addr);
 
         test_coins::create_coin(&biuwu);
-        biuwu_coin::create_coin(&biuwu);
+        biuwu_coin::initialize(&biuwu);
         coin::register<VtuberCoin>(&account);
         coin::register<BiUwU>(&account);
         managed_coin::mint<VtuberCoin>(&biuwu, account_addr, 1000);
@@ -30,12 +30,12 @@ module biuwu::subscription_tests {
 
         let prices: vector<u64> = vector[0, 1000, 2000, 3000];
         let period: u64 = 30;
-        subscription::create_subscription_plan<VtuberCoin>(&biuwu, prices, period);
+        subscriptions::create_subscription_plan<VtuberCoin>(&biuwu, prices, period);
         scripts::update_tier<VtuberCoin>(&account, 1);
         scripts::deposit<VtuberCoin>(&account, 1000);
         timestamp::update_global_time_for_test(timestamp::now_microseconds() + 10);
-        assert!(subscription::is_active<VtuberCoin>(account_addr), 1000);
+        assert!(subscriptions::is_active<VtuberCoin>(account_addr), 1000);
         timestamp::update_global_time_for_test(timestamp::now_microseconds() + 30);
-        assert!(!subscription::is_active<VtuberCoin>(account_addr), 1001);
+        assert!(!subscriptions::is_active<VtuberCoin>(account_addr), 1001);
     }
 }

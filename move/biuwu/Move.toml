@@ -4,7 +4,7 @@ version = "1.0.0"
 authors = []
 
 [addresses]
-biuwu = "0x0d028638cbfe44d92bb686130abeadbafbce777eb5cc8b75e3d08e835370c59f"
+biuwu = "0x06fe457e963c7b8e329821deab9dc02a0a37ef0149d692bd1a78384e8ceccd4e"
 test_coins = "0xfefe"
 
 [dev-addresses]

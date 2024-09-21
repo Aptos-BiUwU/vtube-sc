@@ -4,7 +4,6 @@ version = "1.0.0"
 authors = []
 
 [addresses]
-biuwu_admin = "0x0d028638cbfe44d92bb686130abeadbafbce777eb5cc8b75e3d08e835370c59f"
 vtuber_coin = "_"
 
 [dev-addresses]

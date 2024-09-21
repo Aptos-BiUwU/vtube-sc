@@ -1,11 +1,11 @@
 #[test_only]
-module biuwu::battle_tests {
+module biuwu::battles_tests {
     use std::signer;
 
     use aptos_framework::coin;
     use aptos_framework::managed_coin;
 
-    use biuwu::battle;
+    use biuwu::battles;
     use biuwu::biuwu_coin::{Self, BiUwU};
     use biuwu::scripts;
 
@@ -27,18 +27,18 @@ module biuwu::battle_tests {
         aptos_framework::account::create_account_for_test(idol_0_addr);
         aptos_framework::account::create_account_for_test(idol_1_addr);
 
-        biuwu_coin::create_coin(&biuwu);
+        biuwu_coin::initialize(&biuwu);
         coin::register<BiUwU>(&account);
         coin::register<BiUwU>(&idol_0);
         coin::register<BiUwU>(&idol_1);
         managed_coin::mint<BiUwU>(&biuwu, account_addr, 1000);
 
-        battle::initialize(&biuwu);
-        battle::start_battle(idol_0_addr, idol_1_addr);
+        battles::initialize(&biuwu);
+        battles::start_battle(idol_0_addr, idol_1_addr);
 
         scripts::donate(&account, 0, false, 600);
         scripts::donate(&account, 0, true, 400);
-        battle::stop_battle(&biuwu, 0);
+        battles::stop_battle(&biuwu, 0);
         assert!(coin::balance<BiUwU>(idol_0_addr) == 1000, 1002);
     }
 }

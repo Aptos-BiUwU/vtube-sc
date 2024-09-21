@@ -8,7 +8,7 @@ module biuwu::biuwu_coin {
 
     struct BiUwU {}
 
-    public entry fun create_coin(caller: &signer) {
+    public entry fun initialize(caller: &signer) {
         check_admin(caller);
 
         managed_coin::initialize<BiUwU>(

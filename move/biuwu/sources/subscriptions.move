@@ -1,4 +1,4 @@
-module biuwu::subscription {
+module biuwu::subscriptions {
     use std::signer;
     use std::vector;
 
@@ -15,7 +15,7 @@ module biuwu::subscription {
     /// @notice Error code for division by zero
     const ERR_DIVIDE_BY_ZERO: u64 = 2000;
 
-    struct SubscriptionManagement<phantom CoinType> has key {
+    struct SubscriptionPlan<phantom CoinType> has key {
         prices: vector<u64>,
         period: u64,
         balances: Table<address, u64>,
@@ -31,45 +31,46 @@ module biuwu::subscription {
         let balances = table::new<address, u64>();
         let tiers = table::new<address, u64>();
         let start_times = table::new<address, u64>();
-        let subscription_management = SubscriptionManagement<CoinType> {
+        let subscription_plan = SubscriptionPlan<CoinType> {
             prices,
             period,
             balances,
             tiers,
             start_times
         };
-        move_to(caller, subscription_management);
+        move_to(caller, subscription_plan);
+    }
+
+    public entry fun update_subscription_plan<CoinType>(
+        caller: &signer, prices: vector<u64>, period: u64
+    ) acquires SubscriptionPlan {
+        check_admin(caller);
+
+        let subscription_plan = borrow_global_mut<SubscriptionPlan<CoinType>>(@biuwu);
+        subscription_plan.prices = prices;
+        subscription_plan.period = period;
     }
 
     public fun deposit<CoinType>(
         dst_addr: address, biuwu_coin: Coin<BiUwU>
-    ) acquires SubscriptionManagement {
-        let subscription_management =
-            borrow_global_mut<SubscriptionManagement<CoinType>>(@biuwu);
+    ) acquires SubscriptionPlan {
+        let subscription_plan = borrow_global_mut<SubscriptionPlan<CoinType>>(@biuwu);
         let balance =
-            table::borrow_mut_with_default(
-                &mut subscription_management.balances, dst_addr, 0
-            );
+            table::borrow_mut_with_default(&mut subscription_plan.balances, dst_addr, 0);
         *balance = *balance + coin::value(&biuwu_coin);
         coin::deposit(@biuwu, biuwu_coin);
     }
 
-    public fun update_tier<CoinType>(
-        dst_addr: address, new_tier: u64
-    ) acquires SubscriptionManagement {
-        let subscription_management =
-            borrow_global_mut<SubscriptionManagement<CoinType>>(@biuwu);
+    public fun update_tier<CoinType>(dst_addr: address, new_tier: u64) acquires SubscriptionPlan {
+        let subscription_plan = borrow_global_mut<SubscriptionPlan<CoinType>>(@biuwu);
         let balance =
-            table::borrow_mut_with_default(
-                &mut subscription_management.balances, dst_addr, 0
-            );
-        let tier =
-            table::borrow_mut_with_default(
-                &mut subscription_management.tiers, dst_addr, 0
-            );
+            table::borrow_mut_with_default(&mut subscription_plan.balances, dst_addr, 0);
+        let tier = table::borrow_mut_with_default(
+            &mut subscription_plan.tiers, dst_addr, 0
+        );
         let start_time =
             table::borrow_mut_with_default(
-                &mut subscription_management.start_times,
+                &mut subscription_plan.start_times,
                 dst_addr,
                 timestamp::now_microseconds()
             );
@@ -77,8 +78,8 @@ module biuwu::subscription {
             let used_amount =
                 ceil_mul_div(
                     timestamp::now_microseconds() - *start_time,
-                    *vector::borrow(&subscription_management.prices, *tier),
-                    subscription_management.period
+                    *vector::borrow(&subscription_plan.prices, *tier),
+                    subscription_plan.period
                 );
             *balance = *balance - used_amount;
         };
@@ -87,27 +88,24 @@ module biuwu::subscription {
     }
 
     #[view]
-    public fun is_active<CoinType>(dst_addr: address): bool acquires SubscriptionManagement {
-        let subscription_management =
-            borrow_global<SubscriptionManagement<CoinType>>(@biuwu);
-        let balance =
-            table::borrow_with_default(&subscription_management.balances, dst_addr, &0);
-        let tier = table::borrow_with_default(
-            &subscription_management.tiers, dst_addr, &0
+    public fun is_active<CoinType>(dst_addr: address): bool acquires SubscriptionPlan {
+        let subscription_plan = borrow_global<SubscriptionPlan<CoinType>>(@biuwu);
+        let balance = table::borrow_with_default(
+            &subscription_plan.balances, dst_addr, &0
         );
+        let tier = table::borrow_with_default(&subscription_plan.tiers, dst_addr, &0);
         let start_time =
             table::borrow_with_default(
-                &subscription_management.start_times,
+                &subscription_plan.start_times,
                 dst_addr,
                 &timestamp::now_microseconds()
             );
         let num_periods =
             ceil_div_u64(
                 timestamp::now_microseconds() - *start_time,
-                subscription_management.period
+                subscription_plan.period
             );
-        num_periods * *vector::borrow(&subscription_management.prices, *tier)
-            <= *balance
+        num_periods * *vector::borrow(&subscription_plan.prices, *tier) <= *balance
     }
 
     fun check_admin(caller: &signer) {

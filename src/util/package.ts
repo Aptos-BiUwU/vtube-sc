@@ -2,14 +2,14 @@ import { Account, AccountAddress } from "@aptos-labs/ts-sdk";
 import path from "path";
 import { readFile } from "fs/promises";
 
-import { aptos } from "./aptos";
+import { aptos } from "./common";
 
 const exec = require("util").promisify(require("child_process").exec);
 
 export async function compilePackage(
   packageDir: string,
   outputFile: string,
-  namedAddresses: Array<{ name: string; address: AccountAddress }>
+  namedAddresses: Array<{ name: string; address: AccountAddress }>,
 ) {
   const addressArg = namedAddresses
     .map(({ name, address }) => `${name}=${address}`)
@@ -32,7 +32,7 @@ export async function getPackageBytes(filePath: string) {
 export async function publishPackage(
   account: Account,
   metadataBytes: Uint8Array,
-  moduleBytecode: Uint8Array[]
+  moduleBytecode: Uint8Array[],
 ) {
   const tx = await aptos.publishPackageTransaction({
     account: account.accountAddress,
