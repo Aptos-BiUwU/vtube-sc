@@ -5,6 +5,7 @@ import {
   Account,
   Ed25519PrivateKey,
   AnyRawTransaction,
+  UserTransactionResponse,
 } from "@aptos-labs/ts-sdk";
 
 require("dotenv").config();
@@ -31,5 +32,8 @@ export async function submitTx(signer: Account, tx: AnyRawTransaction) {
     signer: signer,
     transaction: tx,
   });
-  await aptos.waitForTransaction({ transactionHash: hash });
+  const { events } = (await aptos.waitForTransaction({
+    transactionHash: hash,
+  })) as UserTransactionResponse;
+  return events;
 }

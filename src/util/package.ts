@@ -1,5 +1,5 @@
 import { Account, AccountAddress } from "@aptos-labs/ts-sdk";
-import path from "path";
+import * as path from "path";
 import { readFile } from "fs/promises";
 
 import { aptos } from "./common";
@@ -14,13 +14,15 @@ export async function compilePackage(
   const addressArg = namedAddresses
     .map(({ name, address }) => `${name}=${address}`)
     .join(" ");
-  const compileCommand = `aptos move build-publish-payload --json-output-file ${outputFile} --package-dir ${packageDir} --named-addresses ${addressArg} --assume-yes`;
+  const compileCommand = `aptos move build-publish-payload \\
+                          --json-output-file ${outputFile} \\
+                          --package-dir ${packageDir} \\
+                          --named-addresses ${addressArg} \\
+                          --assume-yes`;
   await exec(compileCommand);
 }
 
-export async function getPackageBytes(filePath: string) {
-  const cwd = process.cwd();
-  let packagePath = path.join(cwd, filePath);
+export async function getPackageBytes(packagePath: string) {
   const jsonData = JSON.parse(await readFile(packagePath, "utf-8"));
 
   const metadataBytes = jsonData.args[0].value as Uint8Array;

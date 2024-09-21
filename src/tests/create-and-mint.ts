@@ -1,5 +1,5 @@
 import { getRegisterCoinTx } from "../transactions";
-import { createCoin, mintCoin } from "../admin";
+import { createCoin, initialize, mintCoin } from "../admin";
 import { getAccountFromPrivateKey, getAdminAccount, submitTx } from "../util";
 
 const adminAccount = getAdminAccount();

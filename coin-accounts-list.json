@@ -1,16 +1,12 @@
 {
   "coinAccounts": [
     {
-      "address": "0x34470f6a35c0d2e7e44f25d50077b5ef43b6b0c0e8b1304ddb0fe085d4f9b5a8",
-      "privateKey": "0xa55e967faaf63dd8f66fc298dabac0984f477a7bdf4f79816668b663d497afde"
+      "address": "0x256910a5bc37f11c5566504945a0cd2cbd575e2b7397cc7e5c8a6d74a3072124",
+      "privateKey": "0xf395a41c1fb3f9af2bcc3a6215673144ff4b14e649add70485fa826b6dd958ae"
     },
     {
-      "address": "0x317f016c3056445b2365702f726dcc10488bebc6281756842cd98601bc3bbbd1",
-      "privateKey": "0x0fd9ebd0ba2674bd3f7e7d946af5b9378630b380886205a74a6a10a8294f7aae"
-    },
-    {
-      "address": "0x1b85bb3946a2b64ea269a058af16b59c527fe07fece766777ad67330581f34a1",
-      "privateKey": "0x41176f0c35f5ebbd0195795858b7b49b73ea72bca9d73778470c84619dd56147"
+      "address": "0xfd73d3035ccc04c01f290e5fcb253f8c269a8a9464f02c193a79f51252638294",
+      "privateKey": "0xc79183af0daceb8314a8acd3f15dde76e89bead5d90d5aff7791f941558847d6"
     }
   ]
 }

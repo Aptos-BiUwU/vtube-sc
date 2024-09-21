@@ -10,6 +10,8 @@ import {
 import { Account } from "@aptos-labs/ts-sdk";
 import { readFile, writeFile } from "fs/promises";
 import { getRegisterBiUwUTx } from "../transactions";
+import * as path from "path";
+import * as os from "os";
 
 const adminAccount = getAdminAccount();
 
@@ -21,12 +23,12 @@ export async function createCoin(name: string, symbol: string) {
   });
 
   await compilePackage(
-    "move/vtuber_coin",
-    "move/vtuber_coin/vtuber_coin.json",
+    path.resolve(__dirname, "../../move/vtuber_coin"),
+    path.resolve(os.tmpdir(), "vtuber_coin.json"),
     [{ name: "vtuber_coin", address: coinAccount.accountAddress }],
   );
   const { metadataBytes, moduleBytecode } = await getPackageBytes(
-    "move/vtuber_coin/vtuber_coin.json",
+    path.resolve(os.tmpdir(), "vtuber_coin.json"),
   );
   await publishPackage(coinAccount, metadataBytes, moduleBytecode);
 

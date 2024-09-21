@@ -4,6 +4,7 @@ module biuwu::subscriptions {
 
     use aptos_framework::coin::{Self, Coin};
     use aptos_framework::timestamp;
+    use aptos_framework::event;
 
     use aptos_std::table::{Self, Table};
 
@@ -23,6 +24,30 @@ module biuwu::subscriptions {
         start_times: Table<address, u64>
     }
 
+    #[event]
+    struct SubscriptionPlanCreated<phantom CoinType> has drop, store {
+        prices: vector<u64>,
+        period: u64
+    }
+
+    #[event]
+    struct SubscriptionPlanUpdated<phantom CoinType> has drop, store {
+        prices: vector<u64>,
+        period: u64
+    }
+
+    #[event]
+    struct Deposit<phantom CoinType> has drop, store {
+        dst_addr: address,
+        amount: u64
+    }
+
+    #[event]
+    struct TierUpdated<phantom CoinType> has drop, store {
+        dst_addr: address,
+        new_tier: u64
+    }
+
     public entry fun create_subscription_plan<CoinType>(
         caller: &signer, prices: vector<u64>, period: u64
     ) {
@@ -39,6 +64,10 @@ module biuwu::subscriptions {
             start_times
         };
         move_to(caller, subscription_plan);
+
+        event::emit(
+            SubscriptionPlanCreated<CoinType> { prices, period }
+        );
     }
 
     public entry fun update_subscription_plan<CoinType>(
@@ -49,6 +78,10 @@ module biuwu::subscriptions {
         let subscription_plan = borrow_global_mut<SubscriptionPlan<CoinType>>(@biuwu);
         subscription_plan.prices = prices;
         subscription_plan.period = period;
+
+        event::emit(
+            SubscriptionPlanUpdated<CoinType> { prices, period }
+        );
     }
 
     public fun deposit<CoinType>(
@@ -57,8 +90,13 @@ module biuwu::subscriptions {
         let subscription_plan = borrow_global_mut<SubscriptionPlan<CoinType>>(@biuwu);
         let balance =
             table::borrow_mut_with_default(&mut subscription_plan.balances, dst_addr, 0);
-        *balance = *balance + coin::value(&biuwu_coin);
+        let amount = coin::value(&biuwu_coin);
+        *balance = *balance + amount;
         coin::deposit(@biuwu, biuwu_coin);
+
+        event::emit(
+            Deposit<CoinType> { dst_addr, amount }
+        );
     }
 
     public fun update_tier<CoinType>(dst_addr: address, new_tier: u64) acquires SubscriptionPlan {
@@ -89,6 +127,10 @@ module biuwu::subscriptions {
         };
         *tier = new_tier;
         *start_time = timestamp::now_microseconds();
+
+        event::emit(
+            TierUpdated<CoinType> { dst_addr, new_tier }
+        );
     }
 
     #[view]
