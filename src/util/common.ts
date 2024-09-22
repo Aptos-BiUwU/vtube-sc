@@ -8,7 +8,6 @@ import {
   UserTransactionResponse,
 } from "@aptos-labs/ts-sdk";
 
-require("dotenv").config();
 const config = new AptosConfig({ network: Network.DEVNET });
 export const aptos = new Aptos(config);
 
