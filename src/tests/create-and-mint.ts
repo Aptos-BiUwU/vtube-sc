@@ -1,24 +1,18 @@
 import { getRegisterCoinTx } from "../transactions";
-import { createCoin, initialize, mintCoin } from "../admin";
-import { getAccountFromPrivateKey, getAdminAccount, submitTx } from "../util";
-
-const adminAccount = getAdminAccount();
+import { createCoin, adminAddress, adminAccount, mintCoin } from "../admin";
+import { getAccountFromPrivateKey, submitTx } from "../utils";
 
 async function createAndMint() {
-  const coinAccountPrivateKey = await createCoin("VtuberCoin", "VTC");
+  const { coinPrivateKey } = await createCoin("VtuberCoin", "VTC");
 
-  // const coinAccount = getAccountFromPrivateKey(coinAccountPrivateKey);
-  // const registerCoinTx = await getRegisterCoinTx(
-  //   adminAccount.accountAddress.toString(),
-  //   coinAccount.accountAddress.toString(),
-  // );
-  // await submitTx(adminAccount, registerCoinTx);
+  const coinAccount = getAccountFromPrivateKey(coinPrivateKey);
+  const registerCoinTx = await getRegisterCoinTx(
+    adminAddress,
+    coinAccount.accountAddress.toString(),
+  );
+  await submitTx(adminAccount, registerCoinTx);
 
-  // await mintCoin(
-  //   coinAccountPrivateKey,
-  //   adminAccount.accountAddress.toString(),
-  //   1000,
-  // );
+  await mintCoin(coinPrivateKey, adminAddress, 1000);
 }
 
 createAndMint();

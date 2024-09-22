@@ -1,12 +1,14 @@
 import {
+  adminAccount,
+  adminAddress,
   initialize,
   createSubscriptionPlan,
   mintBiUwU,
   updateSubscriptionPlan,
 } from "../admin";
 import { getDepositTx, getUpdateTierTx } from "../transactions";
-import { getAdminAccount, submitTx } from "../util";
-import { viewIsActive } from "../view";
+import { submitTx } from "../utils";
+import { viewIsActive } from "../views";
 
 async function test() {
   await createSubscriptionPlan(
@@ -20,19 +22,17 @@ async function test() {
     3600000,
   );
 
-  const adminAccount = getAdminAccount();
-
   await initialize();
-  await mintBiUwU(adminAccount.accountAddress.toString(), 1000);
+  await mintBiUwU(adminAddress, 1000);
   const depositTx = await getDepositTx(
-    adminAccount.accountAddress.toString(),
+    adminAddress,
     "0x5c7e74cba10d056ecc53fd3c7f99bb1b0bfcf241a566d126206fed11785e30b5",
     200,
   );
   await submitTx(adminAccount, depositTx);
 
   const updateTierTx = await getUpdateTierTx(
-    adminAccount.accountAddress.toString(),
+    adminAddress,
     "0x5c7e74cba10d056ecc53fd3c7f99bb1b0bfcf241a566d126206fed11785e30b5",
     2,
   );
@@ -40,13 +40,13 @@ async function test() {
   console.log(
     "isActive: ",
     await viewIsActive(
-      adminAccount.accountAddress.toString(),
+      adminAddress,
       "0x5c7e74cba10d056ecc53fd3c7f99bb1b0bfcf241a566d126206fed11785e30b5",
     ),
   );
 
   const updateTierTx2 = await getUpdateTierTx(
-    adminAccount.accountAddress.toString(),
+    adminAddress,
     "0x5c7e74cba10d056ecc53fd3c7f99bb1b0bfcf241a566d126206fed11785e30b5",
     3,
   );
@@ -54,7 +54,7 @@ async function test() {
   console.log(
     "isActive: ",
     await viewIsActive(
-      adminAccount.accountAddress.toString(),
+      adminAddress,
       "0x5c7e74cba10d056ecc53fd3c7f99bb1b0bfcf241a566d126206fed11785e30b5",
     ),
   );

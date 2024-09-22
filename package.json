@@ -1,13 +1,30 @@
 {
   "name": "biuwu-sc",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "packageManager": "yarn@4.4.0",
+  "scripts": {
+    "publish-move": "eval $(grep '^ADMIN_ADDRESS' .env) && aptos move publish --package-dir move/biuwu --named-addresses biuwu=$ADMIN_ADDRESS"
+  },
   "devDependencies": {
     "@aptos-labs/ts-sdk": "^1.28.0",
+    "@eslint/js": "^9.11.0",
+    "@types/cors": "^2.8.17",
+    "@types/eslint__js": "^8.42.3",
+    "@types/express": "^4.17.21",
+    "@types/helmet": "^4.0.0",
     "@types/node": "^22.5.5",
+    "cors": "^2.8.5",
     "dotenv": "^16.4.5",
+    "eslint": "^9.11.0",
+    "eslint-config-prettier": "^9.1.0",
+    "express": "^4.21.0",
+    "helmet": "^7.1.0",
+    "http-status-codes": "^2.3.0",
+    "https": "^1.0.0",
+    "nodemon": "^3.1.7",
     "prettier": "^3.3.3",
     "ts-node": "^10.9.2",
-    "typescript": "^5.6.2"
+    "typescript": "^5.6.2",
+    "typescript-eslint": "^8.6.0"
   }
 }

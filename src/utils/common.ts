@@ -8,7 +8,6 @@ import {
   UserTransactionResponse,
 } from "@aptos-labs/ts-sdk";
 
-require("dotenv").config();
 const config = new AptosConfig({ network: Network.DEVNET });
 export const aptos = new Aptos(config);
 
@@ -19,21 +18,18 @@ export function getAccountFromPrivateKey(privateKey: string) {
   return account;
 }
 
-export function getAdminAccount() {
-  return getAccountFromPrivateKey(process.env.ADMIN_PRIVATE_KEY!);
-}
-
-export function getAdminAddress() {
-  return process.env.ADMIN_ADDRESS!;
-}
-
 export async function submitTx(signer: Account, tx: AnyRawTransaction) {
-  const { hash } = await aptos.signAndSubmitTransaction({
-    signer: signer,
-    transaction: tx,
-  });
-  const { events } = (await aptos.waitForTransaction({
-    transactionHash: hash,
-  })) as UserTransactionResponse;
-  return events;
+  try {
+    const { hash } = await aptos.signAndSubmitTransaction({
+      signer: signer,
+      transaction: tx,
+    });
+    const { events } = (await aptos.waitForTransaction({
+      transactionHash: hash,
+    })) as UserTransactionResponse;
+    return events;
+  } catch (err) {
+    console.error(err);
+  }
+  return [];
 }

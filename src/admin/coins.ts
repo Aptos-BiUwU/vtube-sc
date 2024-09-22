@@ -5,15 +5,16 @@ import {
   getPackageBytes,
   publishPackage,
   submitTx,
-  getAdminAccount,
-} from "../util";
+} from "../utils";
+import { adminAccount, adminAddress } from "./init";
 import { Account } from "@aptos-labs/ts-sdk";
 import { readFile, writeFile } from "fs/promises";
 import { getRegisterBiUwUTx } from "../transactions";
 import * as path from "path";
 import * as os from "os";
-
-const adminAccount = getAdminAccount();
+import { Request, Response } from "express";
+import { StatusCodes } from "http-status-codes";
+import { adminRouter } from "./index";
 
 export async function createCoin(name: string, symbol: string) {
   const coinAccount = Account.generate();
@@ -41,8 +42,8 @@ export async function createCoin(name: string, symbol: string) {
   });
   await submitTx(coinAccount, tx);
 
-  let data = await readFile("coin-accounts-list.json", "utf-8");
-  let jsonData = JSON.parse(data);
+  const data = await readFile("coin-accounts-list.json", "utf-8");
+  const jsonData = JSON.parse(data);
   jsonData.coinAccounts.push({
     address: coinAccount.accountAddress.toString(),
     privateKey: coinAccount.privateKey.toString(),
@@ -52,8 +53,20 @@ export async function createCoin(name: string, symbol: string) {
   tx = await getRegisterBiUwUTx(coinAccount.accountAddress.toString());
   await submitTx(coinAccount, tx);
 
-  return coinAccount.privateKey.toString();
+  return {
+    coinAddress: coinAccount.accountAddress.toString(),
+    coinPrivateKey: coinAccount.privateKey.toString(),
+  };
 }
+
+adminRouter.post("/createCoin", async (req: Request, res: Response) => {
+  const { name, symbol } = req.body;
+  if (!name || !symbol) {
+    return res.status(StatusCodes.BAD_REQUEST).send("Missing required fields");
+  }
+  const { coinAddress, coinPrivateKey } = await createCoin(name, symbol);
+  return res.status(StatusCodes.OK).send({ coinAddress, coinPrivateKey });
+});
 
 export async function mintCoin(
   coinPrivateKey: string,
@@ -72,14 +85,32 @@ export async function mintCoin(
   await submitTx(coinAccount, tx);
 }
 
+adminRouter.post("/mintCoin", async (req: Request, res: Response) => {
+  const { coinPrivateKey, userAddress, amount } = req.body;
+  if (!coinPrivateKey || !userAddress || !amount) {
+    return res.status(StatusCodes.BAD_REQUEST).send("Missing required fields");
+  }
+  await mintCoin(coinPrivateKey, userAddress, amount);
+  return res.status(StatusCodes.OK).send("Coins minted");
+});
+
 export async function mintBiUwU(userAddress: string, amount: number) {
   const tx = await aptos.transaction.build.simple({
-    sender: adminAccount.accountAddress,
+    sender: adminAddress,
     data: {
       function: `0x1::managed_coin::mint`,
-      typeArguments: [`${adminAccount.accountAddress}::biuwu_coin::BiUwU`],
+      typeArguments: [`${adminAddress}::biuwu_coin::BiUwU`],
       functionArguments: [userAddress, amount],
     },
   });
   await submitTx(adminAccount, tx);
 }
+
+adminRouter.post("/mintBiUwU", async (req: Request, res: Response) => {
+  const { userAddress, amount } = req.body;
+  if (!userAddress || !amount) {
+    return res.status(StatusCodes.BAD_REQUEST).send("Missing required fields");
+  }
+  await mintBiUwU(userAddress, amount);
+  return res.status(StatusCodes.OK).send("BiUwU minted");
+});

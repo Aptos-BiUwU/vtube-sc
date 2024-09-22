@@ -1,10 +1,11 @@
 import { Account, AccountAddress } from "@aptos-labs/ts-sdk";
-import * as path from "path";
 import { readFile } from "fs/promises";
 
 import { aptos } from "./common";
+import util from "util";
+import { exec } from "child_process";
 
-const exec = require("util").promisify(require("child_process").exec);
+const promisifiedExec = util.promisify(exec);
 
 export async function compilePackage(
   packageDir: string,
@@ -19,7 +20,7 @@ export async function compilePackage(
                           --package-dir ${packageDir} \\
                           --named-addresses ${addressArg} \\
                           --assume-yes`;
-  await exec(compileCommand);
+  await promisifiedExec(compileCommand);
 }
 
 export async function getPackageBytes(packagePath: string) {

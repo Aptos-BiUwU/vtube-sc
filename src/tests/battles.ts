@@ -1,7 +1,13 @@
 import { assert } from "console";
-import { initialize, mintBiUwU, startBattle, stopBattle } from "../admin";
+import {
+  adminAccount,
+  adminAddress,
+  mintBiUwU,
+  startBattle,
+  stopBattle,
+} from "../admin";
 import { getDonateTx } from "../transactions/battles";
-import { getAdminAccount, submitTx } from "../util";
+import { submitTx } from "../utils";
 
 async function test() {
   const { vault_id } = await startBattle(
@@ -10,15 +16,8 @@ async function test() {
   );
   assert(vault_id !== null);
 
-  const adminAccount = getAdminAccount();
-
-  await mintBiUwU(adminAccount.accountAddress.toString(), 1000);
-  const donateTx = await getDonateTx(
-    adminAccount.accountAddress.toString(),
-    vault_id,
-    true,
-    100,
-  );
+  await mintBiUwU(adminAddress, 1000);
+  const donateTx = await getDonateTx(adminAddress, vault_id, true, 100);
   await submitTx(adminAccount, donateTx);
 
   console.log(await stopBattle(vault_id));
