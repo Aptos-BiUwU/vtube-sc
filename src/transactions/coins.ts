@@ -2,7 +2,16 @@ import { aptos } from "../utils";
 import { adminAddress } from "../admin";
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
-import { transactionsRouter, stringify } from "./index";
+import { transactionsRouter } from "./index";
+import { InputEntryFunctionData } from "@aptos-labs/ts-sdk";
+
+function getRegisterCoinTxData(coinAddress: string) {
+  return {
+    function: `0x1::managed_coin::register`,
+    functionArguments: [],
+    typeArguments: [`${coinAddress}::vtuber_coin::VtuberCoin`],
+  };
+}
 
 export async function getRegisterCoinTx(
   userAddress: string,
@@ -10,87 +19,92 @@ export async function getRegisterCoinTx(
 ) {
   const tx = await aptos.transaction.build.simple({
     sender: userAddress,
-    data: {
-      function: `0x1::managed_coin::register`,
-      functionArguments: [],
-      typeArguments: [`${coinAddress}::vtuber_coin::VtuberCoin`],
-    },
+    data: getRegisterCoinTxData(coinAddress) as InputEntryFunctionData,
   });
   return tx;
 }
 
 transactionsRouter.post(
-  "/getRegisterCoinTx",
+  "/getRegisterCoinTxData",
   async (req: Request, res: Response) => {
-    const { userAddress, coinAddress } = req.body;
-    if (userAddress == undefined || coinAddress == undefined) {
+    const { coinAddress } = req.body;
+    if (coinAddress == undefined) {
       return res
         .status(StatusCodes.BAD_REQUEST)
         .send("Missing required fields");
     }
     try {
-      const tx = await getRegisterCoinTx(userAddress, coinAddress);
-      return res.status(StatusCodes.OK).send({ stringifiedTx: stringify(tx) });
+      const txData = getRegisterCoinTxData(coinAddress);
+      return res.status(StatusCodes.OK).send({ txData });
     } catch (err) {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(err);
     }
   },
 );
+
+function getRegisterBiUwUTxData() {
+  return {
+    function: `0x1::managed_coin::register`,
+    functionArguments: [],
+    typeArguments: [`${adminAddress}::biuwu_coin::BiUwU`],
+  };
+}
 
 export async function getRegisterBiUwUTx(userAddress: string) {
   const tx = await aptos.transaction.build.simple({
     sender: userAddress,
-    data: {
-      function: `0x1::managed_coin::register`,
-      functionArguments: [],
-      typeArguments: [`${adminAddress}::biuwu_coin::BiUwU`],
-    },
+    data: getRegisterBiUwUTxData() as InputEntryFunctionData,
   });
   return tx;
 }
 
 transactionsRouter.post(
-  "/getRegisterBiUwUTx",
-  async (req: Request, res: Response) => {
-    const { userAddress } = req.body;
-    if (userAddress == undefined) {
-      return res
-        .status(StatusCodes.BAD_REQUEST)
-        .send("Missing required fields");
-    }
+  "/getRegisterBiUwUTxData",
+  async (_req: Request, res: Response) => {
     try {
-      const tx = await getRegisterBiUwUTx(userAddress);
-      return res.status(StatusCodes.OK).send({ stringifiedTx: stringify(tx) });
+      const txData = getRegisterBiUwUTxData();
+      return res.status(StatusCodes.OK).send({ txData });
     } catch (err) {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(err);
     }
   },
 );
 
-export async function getTransferCoinTx(
+function getTransferCoinTxData(
   coinAddress: string,
+  receiverAddress: string,
+  amount: number,
+) {
+  return {
+    function: `0x1::coin::transfer`,
+    functionArguments: [receiverAddress, amount],
+    typeArguments: [`${coinAddress}::vtuber_coin::VtuberCoin`],
+  };
+}
+
+export async function getTransferCoinTx(
   senderAddress: string,
+  coinAddress: string,
   receiverAddress: string,
   amount: number,
 ) {
   const tx = await aptos.transaction.build.simple({
     sender: senderAddress,
-    data: {
-      function: `0x1::coin::transfer`,
-      typeArguments: [`${coinAddress}::vtuber_coin::VtuberCoin`],
-      functionArguments: [receiverAddress, amount],
-    },
+    data: getTransferCoinTxData(
+      coinAddress,
+      receiverAddress,
+      amount,
+    ) as InputEntryFunctionData,
   });
   return tx;
 }
 
 transactionsRouter.post(
-  "/getTransferCoinTx",
+  "/getTransferCoinTxData",
   async (req: Request, res: Response) => {
-    const { coinAddress, senderAddress, receiverAddress, amount } = req.body;
+    const { coinAddress, receiverAddress, amount } = req.body;
     if (
       coinAddress == undefined ||
-      senderAddress == undefined ||
       receiverAddress == undefined ||
       amount == undefined
     ) {
@@ -99,13 +113,12 @@ transactionsRouter.post(
         .send("Missing required fields");
     }
     try {
-      const tx = await getTransferCoinTx(
+      const txData = getTransferCoinTxData(
         coinAddress,
-        senderAddress,
         receiverAddress,
         amount,
       );
-      return res.status(StatusCodes.OK).send({ stringifiedTx: stringify(tx) });
+      return res.status(StatusCodes.OK).send({ txData });
     } catch (err) {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(err);
     }

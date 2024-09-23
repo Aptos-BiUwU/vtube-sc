@@ -2,7 +2,16 @@ import { aptos } from "../utils";
 import { adminAddress } from "../admin";
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
-import { transactionsRouter, stringify } from "./index";
+import { transactionsRouter } from "./index";
+import { InputEntryFunctionData } from "@aptos-labs/ts-sdk";
+
+function getDepositTxData(coinAddress: string, amount: number) {
+  return {
+    function: `${adminAddress}::scripts::deposit`,
+    functionArguments: [amount],
+    typeArguments: [`${coinAddress}::vtuber_coin::VtuberCoin`],
+  };
+}
 
 export async function getDepositTx(
   userAddress: string,
@@ -11,36 +20,36 @@ export async function getDepositTx(
 ) {
   const tx = await aptos.transaction.build.simple({
     sender: userAddress,
-    data: {
-      function: `${adminAddress}::scripts::deposit`,
-      typeArguments: [`${coinAddress}::vtuber_coin::VtuberCoin`],
-      functionArguments: [amount],
-    },
+    data: getDepositTxData(coinAddress, amount) as InputEntryFunctionData,
   });
   return tx;
 }
 
 transactionsRouter.post(
-  "/getDepositTx",
+  "/getDepositTxData",
   async (req: Request, res: Response) => {
-    const { userAddress, coinAddress, amount } = req.body;
-    if (
-      userAddress == undefined ||
-      coinAddress == undefined ||
-      amount == undefined
-    ) {
+    const { coinAddress, amount } = req.body;
+    if (coinAddress == undefined || amount == undefined) {
       return res
         .status(StatusCodes.BAD_REQUEST)
         .send("Missing required fields");
     }
     try {
-      const tx = await getDepositTx(userAddress, coinAddress, amount);
-      return res.status(StatusCodes.OK).send({ stringifiedTx: stringify(tx) });
+      const txData = getDepositTxData(coinAddress, amount);
+      return res.status(StatusCodes.OK).send({ txData });
     } catch (err) {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(err);
     }
   },
 );
+
+function getUpdateTierTxData(coinAddress: string, tier: number) {
+  return {
+    function: `${adminAddress}::scripts::update_tier`,
+    functionArguments: [tier],
+    typeArguments: [`${coinAddress}::vtuber_coin::VtuberCoin`],
+  };
+}
 
 export async function getUpdateTierTx(
   userAddress: string,
@@ -49,31 +58,23 @@ export async function getUpdateTierTx(
 ) {
   const tx = await aptos.transaction.build.simple({
     sender: userAddress,
-    data: {
-      function: `${adminAddress}::scripts::update_tier`,
-      typeArguments: [`${coinAddress}::vtuber_coin::VtuberCoin`],
-      functionArguments: [tier],
-    },
+    data: getUpdateTierTxData(coinAddress, tier) as InputEntryFunctionData,
   });
   return tx;
 }
 
 transactionsRouter.post(
-  "/getUpdateTierTx",
+  "/getUpdateTierTxData",
   async (req: Request, res: Response) => {
-    const { userAddress, coinAddress, tier } = req.body;
-    if (
-      userAddress == undefined ||
-      coinAddress == undefined ||
-      tier == undefined
-    ) {
+    const { coinAddress, tier } = req.body;
+    if (coinAddress == undefined || tier == undefined) {
       return res
         .status(StatusCodes.BAD_REQUEST)
         .send("Missing required fields");
     }
     try {
-      const tx = await getUpdateTierTx(userAddress, coinAddress, tier);
-      return res.status(StatusCodes.OK).send({ stringifiedTx: stringify(tx) });
+      const txData = getUpdateTierTxData(coinAddress, tier);
+      return res.status(StatusCodes.OK).send({ txData });
     } catch (err) {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(err);
     }
