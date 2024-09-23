@@ -16,7 +16,7 @@ export async function viewIsActive(userAddress: string, coinAddress: string) {
 
 viewsRouter.post("/viewIsActive", async (req: Request, res: Response) => {
   const { userAddress, coinAddress } = req.body;
-  if (!userAddress || !coinAddress) {
+  if (userAddress == undefined || coinAddress == undefined) {
     return res.status(StatusCodes.BAD_REQUEST).send("Missing required fields");
   }
   const isActive = await viewIsActive(userAddress, coinAddress);

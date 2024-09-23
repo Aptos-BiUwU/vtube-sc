@@ -24,13 +24,21 @@ adminRouter.post(
   "/createSubscriptionPlan",
   async (req: Request, res: Response) => {
     const { coinAddress, prices, period } = req.body;
-    if (!coinAddress || !prices || !period) {
+    if (
+      coinAddress == undefined ||
+      prices == undefined ||
+      period == undefined
+    ) {
       return res
         .status(StatusCodes.BAD_REQUEST)
         .send("Missing required fields");
     }
-    await createSubscriptionPlan(coinAddress, prices, period);
-    return res.status(StatusCodes.OK).send("Subscription plan created");
+    try {
+      await createSubscriptionPlan(coinAddress, prices, period);
+      return res.status(StatusCodes.OK).send("Subscription plan created");
+    } catch (err) {
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(err);
+    }
   },
 );
 
@@ -54,12 +62,20 @@ adminRouter.post(
   "/updateSubscriptionPlan",
   async (req: Request, res: Response) => {
     const { coinAddress, prices, period } = req.body;
-    if (!coinAddress || !prices || !period) {
+    if (
+      coinAddress == undefined ||
+      prices == undefined ||
+      period == undefined
+    ) {
       return res
         .status(StatusCodes.BAD_REQUEST)
         .send("Missing required fields");
     }
-    await updateSubscriptionPlan(coinAddress, prices, period);
-    return res.status(StatusCodes.OK).send("Subscription plan updated");
+    try {
+      await updateSubscriptionPlan(coinAddress, prices, period);
+      return res.status(StatusCodes.OK).send("Subscription plan updated");
+    } catch (err) {
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(err);
+    }
   },
 );

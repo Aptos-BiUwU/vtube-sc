@@ -2,7 +2,7 @@ import { aptos } from "../utils";
 import { adminAddress } from "../admin";
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
-import { transactionsRouter } from "./index";
+import { transactionsRouter, stringify } from "./index";
 
 export async function getRegisterCoinTx(
   userAddress: string,
@@ -23,13 +23,17 @@ transactionsRouter.post(
   "/getRegisterCoinTx",
   async (req: Request, res: Response) => {
     const { userAddress, coinAddress } = req.body;
-    if (!userAddress || !coinAddress) {
+    if (userAddress == undefined || coinAddress == undefined) {
       return res
         .status(StatusCodes.BAD_REQUEST)
         .send("Missing required fields");
     }
-    const tx = await getRegisterCoinTx(userAddress, coinAddress);
-    return res.status(StatusCodes.OK).send({ tx });
+    try {
+      const tx = await getRegisterCoinTx(userAddress, coinAddress);
+      return res.status(StatusCodes.OK).send({ stringifiedTx: stringify(tx) });
+    } catch (err) {
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(err);
+    }
   },
 );
 
@@ -49,13 +53,17 @@ transactionsRouter.post(
   "/getRegisterBiUwUTx",
   async (req: Request, res: Response) => {
     const { userAddress } = req.body;
-    if (!userAddress) {
+    if (userAddress == undefined) {
       return res
         .status(StatusCodes.BAD_REQUEST)
         .send("Missing required fields");
     }
-    const tx = await getRegisterBiUwUTx(userAddress);
-    return res.status(StatusCodes.OK).send({ tx });
+    try {
+      const tx = await getRegisterBiUwUTx(userAddress);
+      return res.status(StatusCodes.OK).send({ stringifiedTx: stringify(tx) });
+    } catch (err) {
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(err);
+    }
   },
 );
 
@@ -80,17 +88,26 @@ transactionsRouter.post(
   "/getTransferCoinTx",
   async (req: Request, res: Response) => {
     const { coinAddress, senderAddress, receiverAddress, amount } = req.body;
-    if (!coinAddress || !senderAddress || !receiverAddress || !amount) {
+    if (
+      coinAddress == undefined ||
+      senderAddress == undefined ||
+      receiverAddress == undefined ||
+      amount == undefined
+    ) {
       return res
         .status(StatusCodes.BAD_REQUEST)
         .send("Missing required fields");
     }
-    const tx = await getTransferCoinTx(
-      coinAddress,
-      senderAddress,
-      receiverAddress,
-      amount,
-    );
-    return res.status(StatusCodes.OK).send({ tx });
+    try {
+      const tx = await getTransferCoinTx(
+        coinAddress,
+        senderAddress,
+        receiverAddress,
+        amount,
+      );
+      return res.status(StatusCodes.OK).send({ stringifiedTx: stringify(tx) });
+    } catch (err) {
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(err);
+    }
   },
 );

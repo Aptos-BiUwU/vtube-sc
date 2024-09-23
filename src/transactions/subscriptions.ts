@@ -2,7 +2,7 @@ import { aptos } from "../utils";
 import { adminAddress } from "../admin";
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
-import { transactionsRouter } from "./index";
+import { transactionsRouter, stringify } from "./index";
 
 export async function getDepositTx(
   userAddress: string,
@@ -24,13 +24,21 @@ transactionsRouter.post(
   "/getDepositTx",
   async (req: Request, res: Response) => {
     const { userAddress, coinAddress, amount } = req.body;
-    if (!userAddress || !coinAddress || !amount) {
+    if (
+      userAddress == undefined ||
+      coinAddress == undefined ||
+      amount == undefined
+    ) {
       return res
         .status(StatusCodes.BAD_REQUEST)
         .send("Missing required fields");
     }
-    const tx = await getDepositTx(userAddress, coinAddress, amount);
-    return res.status(StatusCodes.OK).send({ tx });
+    try {
+      const tx = await getDepositTx(userAddress, coinAddress, amount);
+      return res.status(StatusCodes.OK).send({ stringifiedTx: stringify(tx) });
+    } catch (err) {
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(err);
+    }
   },
 );
 
@@ -54,12 +62,20 @@ transactionsRouter.post(
   "/getUpdateTierTx",
   async (req: Request, res: Response) => {
     const { userAddress, coinAddress, tier } = req.body;
-    if (!userAddress || !coinAddress || !tier) {
+    if (
+      userAddress == undefined ||
+      coinAddress == undefined ||
+      tier == undefined
+    ) {
       return res
         .status(StatusCodes.BAD_REQUEST)
         .send("Missing required fields");
     }
-    const tx = await getUpdateTierTx(userAddress, coinAddress, tier);
-    return res.status(StatusCodes.OK).send({ tx });
+    try {
+      const tx = await getUpdateTierTx(userAddress, coinAddress, tier);
+      return res.status(StatusCodes.OK).send({ stringifiedTx: stringify(tx) });
+    } catch (err) {
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(err);
+    }
   },
 );

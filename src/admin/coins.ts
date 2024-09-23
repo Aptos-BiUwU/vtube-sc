@@ -61,11 +61,15 @@ export async function createCoin(name: string, symbol: string) {
 
 adminRouter.post("/createCoin", async (req: Request, res: Response) => {
   const { name, symbol } = req.body;
-  if (!name || !symbol) {
+  if (name == undefined || symbol == undefined) {
     return res.status(StatusCodes.BAD_REQUEST).send("Missing required fields");
   }
-  const { coinAddress, coinPrivateKey } = await createCoin(name, symbol);
-  return res.status(StatusCodes.OK).send({ coinAddress, coinPrivateKey });
+  try {
+    const { coinAddress, coinPrivateKey } = await createCoin(name, symbol);
+    return res.status(StatusCodes.OK).send({ coinAddress, coinPrivateKey });
+  } catch (err) {
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(err);
+  }
 });
 
 export async function mintCoin(
@@ -87,11 +91,19 @@ export async function mintCoin(
 
 adminRouter.post("/mintCoin", async (req: Request, res: Response) => {
   const { coinPrivateKey, userAddress, amount } = req.body;
-  if (!coinPrivateKey || !userAddress || !amount) {
+  if (
+    coinPrivateKey == undefined ||
+    userAddress == undefined ||
+    amount == undefined
+  ) {
     return res.status(StatusCodes.BAD_REQUEST).send("Missing required fields");
   }
-  await mintCoin(coinPrivateKey, userAddress, amount);
-  return res.status(StatusCodes.OK).send("Coins minted");
+  try {
+    await mintCoin(coinPrivateKey, userAddress, amount);
+    return res.status(StatusCodes.OK).send("Coins minted");
+  } catch (err) {
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(err);
+  }
 });
 
 export async function mintBiUwU(userAddress: string, amount: number) {
@@ -108,9 +120,13 @@ export async function mintBiUwU(userAddress: string, amount: number) {
 
 adminRouter.post("/mintBiUwU", async (req: Request, res: Response) => {
   const { userAddress, amount } = req.body;
-  if (!userAddress || !amount) {
+  if (userAddress == undefined || amount == undefined) {
     return res.status(StatusCodes.BAD_REQUEST).send("Missing required fields");
   }
-  await mintBiUwU(userAddress, amount);
-  return res.status(StatusCodes.OK).send("BiUwU minted");
+  try {
+    await mintBiUwU(userAddress, amount);
+    return res.status(StatusCodes.OK).send("BiUwU minted");
+  } catch (err) {
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(err);
+  }
 });

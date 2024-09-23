@@ -24,21 +24,19 @@ export async function startBattle(coinAddress0: string, coinAddress1: string) {
       return { vault_id: event.data.vault_id };
     }
   }
-  return { vault_id: null };
 }
 
 adminRouter.post("/startBattle", async (req: Request, res: Response) => {
   const { coinAddress0, coinAddress1 } = req.body;
-  if (!coinAddress0 || !coinAddress1) {
+  if (coinAddress0 == undefined || coinAddress1 == undefined) {
     return res.status(StatusCodes.BAD_REQUEST).send("Missing required fields");
   }
-  const { vault_id } = await startBattle(coinAddress0, coinAddress1);
-  if (!vault_id) {
-    return res
-      .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .send("Failed to start battle");
+  try {
+    const { vault_id } = (await startBattle(coinAddress0, coinAddress1))!;
+    return res.status(StatusCodes.OK).send({ vault_id });
+  } catch (err) {
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(err);
   }
-  return res.status(StatusCodes.OK).send({ vault_id });
 });
 
 /**
@@ -63,14 +61,13 @@ export async function stopBattle(vaultId: number) {
 
 adminRouter.post("/stopBattle", async (req: Request, res: Response) => {
   const { vaultId } = req.body;
-  if (!vaultId) {
+  if (vaultId == undefined) {
     return res.status(StatusCodes.BAD_REQUEST).send("Missing required fields");
   }
-  const result = await stopBattle(vaultId);
-  if (!result) {
-    return res
-      .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .send("Failed to stop battle");
+  try {
+    const result = await stopBattle(vaultId);
+    return res.status(StatusCodes.OK).send(result);
+  } catch (err) {
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(err);
   }
-  return res.status(StatusCodes.OK).send(result);
 });
