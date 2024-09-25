@@ -6,7 +6,7 @@ import {
   startBattle,
   stopBattle,
 } from "../admin";
-import { getDonateTx } from "../transactions/battles";
+import { getDonateBattleTx } from "../transactions/battles";
 import { submitTx } from "../utils";
 
 async function test() {
@@ -17,7 +17,7 @@ async function test() {
   assert(vault_id != null);
 
   await mintBiUwU(adminAddress, 1000);
-  const donateTx = await getDonateTx(adminAddress, vault_id, true, 100);
+  const donateTx = await getDonateBattleTx(adminAddress, vault_id, true, 100);
   await submitTx(adminAccount, donateTx);
 
   console.log(await stopBattle(vault_id));

@@ -5,9 +5,6 @@ import helmet from "helmet";
 import { adminRouter } from "./admin";
 import { transactionsRouter } from "./transactions";
 import { viewsRouter } from "./views";
-import https from "https";
-import { readFileSync } from "fs";
-import path from "path";
 
 dotenv.config();
 
@@ -29,14 +26,6 @@ app.use("/admin", adminRouter);
 app.use("/transactions", transactionsRouter);
 app.use("/views", viewsRouter);
 
-const server = https.createServer(
-  {
-    key: readFileSync(path.join(__dirname, "key.pem")),
-    cert: readFileSync(path.join(__dirname, "cert.pem")),
-  },
-  app,
-);
-
-server.listen(PORT, () => {
-  console.log(`Server is running on https://localhost:${PORT}`);
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
 });
