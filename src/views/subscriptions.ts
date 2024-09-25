@@ -19,6 +19,10 @@ viewsRouter.post("/viewIsActive", async (req: Request, res: Response) => {
   if (userAddress == undefined || coinAddress == undefined) {
     return res.status(StatusCodes.BAD_REQUEST).send("Missing required fields");
   }
-  const isActive = await viewIsActive(userAddress, coinAddress);
-  return res.status(StatusCodes.OK).send({ isActive });
+  try {
+    const isActive = await viewIsActive(userAddress, coinAddress);
+    return res.status(StatusCodes.OK).send({ isActive });
+  } catch (err) {
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(err);
+  }
 });
