@@ -36,8 +36,8 @@ module biuwu::battles_tests {
         battles::initialize(&biuwu);
         battles::start_battle(idol_0_addr, idol_1_addr);
 
-        scripts::donate(&account, 0, false, 600);
-        scripts::donate(&account, 0, true, 400);
+        scripts::attack(&account, 0, false, 600);
+        scripts::attack(&account, 0, true, 400);
         battles::stop_battle(&biuwu, 0);
         assert!(coin::balance<BiUwU>(idol_0_addr) == 1000, 1002);
     }

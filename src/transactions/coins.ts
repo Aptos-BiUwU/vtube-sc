@@ -1,9 +1,7 @@
-import { aptos } from "../utils";
 import { adminAddress } from "../admin";
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { transactionsRouter } from "./index";
-import { InputEntryFunctionData } from "@aptos-labs/ts-sdk";
 
 function getRegisterCoinTxData(coinAddress: string) {
   return {
@@ -11,17 +9,6 @@ function getRegisterCoinTxData(coinAddress: string) {
     functionArguments: [],
     typeArguments: [`${coinAddress}::vtuber_coin::VtuberCoin`],
   };
-}
-
-export async function getRegisterCoinTx(
-  userAddress: string,
-  coinAddress: string,
-) {
-  const tx = await aptos.transaction.build.simple({
-    sender: userAddress,
-    data: getRegisterCoinTxData(coinAddress) as InputEntryFunctionData,
-  });
-  return tx;
 }
 
 transactionsRouter.post(
@@ -42,20 +29,12 @@ transactionsRouter.post(
   },
 );
 
-function getRegisterBiUwUTxData() {
+export function getRegisterBiUwUTxData() {
   return {
     function: `0x1::managed_coin::register`,
     functionArguments: [],
     typeArguments: [`${adminAddress}::biuwu_coin::BiUwU`],
   };
-}
-
-export async function getRegisterBiUwUTx(userAddress: string) {
-  const tx = await aptos.transaction.build.simple({
-    sender: userAddress,
-    data: getRegisterBiUwUTxData() as InputEntryFunctionData,
-  });
-  return tx;
 }
 
 transactionsRouter.post(
@@ -80,23 +59,6 @@ function getTransferCoinTxData(
     functionArguments: [receiverAddress, amount],
     typeArguments: [`${coinAddress}::vtuber_coin::VtuberCoin`],
   };
-}
-
-export async function getTransferCoinTx(
-  senderAddress: string,
-  coinAddress: string,
-  receiverAddress: string,
-  amount: number,
-) {
-  const tx = await aptos.transaction.build.simple({
-    sender: senderAddress,
-    data: getTransferCoinTxData(
-      coinAddress,
-      receiverAddress,
-      amount,
-    ) as InputEntryFunctionData,
-  });
-  return tx;
 }
 
 transactionsRouter.post(

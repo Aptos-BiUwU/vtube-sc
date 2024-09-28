@@ -6,87 +6,95 @@ module biuwu::battles {
 
     use biuwu::biuwu_coin::{BiUwU};
 
-    struct Vault has store {
+    struct Battle has store {
         address_0: address,
         address_1: address,
         reserve_0: u64,
         reserve_1: u64
     }
 
-    struct VaultManagement has key {
-        vaults: vector<Vault>
+    struct BattleManagement has key {
+        battles: vector<Battle>
     }
 
     #[event]
     struct BattleStarted has drop, store {
         address_0: address,
         address_1: address,
-        vault_id: u64
+        battle_id: u64
     }
 
     #[event]
-    struct Donation has drop, store {
-        vault_id: u64,
+    struct AttackPerformed has drop, store {
+        battle_id: u64,
         side: bool,
         amount: u64
     }
 
     #[event]
     struct BattleStopped has drop, store {
-        vault_id: u64,
+        battle_id: u64,
         winner: address,
         prize: u64
     }
 
     public entry fun initialize(caller: &signer) {
-        let vaults: vector<Vault> = vector[];
-        let vault_management = VaultManagement { vaults };
-        move_to(caller, vault_management);
+        let battles: vector<Battle> = vector[];
+        let battle_management = BattleManagement { battles };
+        move_to(caller, battle_management);
     }
 
-    public entry fun start_battle(address_0: address, address_1: address) acquires VaultManagement {
-        let vault = Vault { address_0, address_1, reserve_0: 0, reserve_1: 0 };
-        let vault_management = borrow_global_mut<VaultManagement>(@biuwu);
-        vector::push_back(&mut vault_management.vaults, vault);
+    public entry fun start_battle(address_0: address, address_1: address) acquires BattleManagement {
+        let battle = Battle { address_0, address_1, reserve_0: 0, reserve_1: 0 };
+        let battle_management = borrow_global_mut<BattleManagement>(@biuwu);
+        vector::push_back(&mut battle_management.battles, battle);
 
         event::emit(
-            BattleStarted { address_0, address_1, vault_id: vector::length(&vault_management.vaults) - 1 }
+            BattleStarted {
+                address_0,
+                address_1,
+                battle_id: vector::length(&battle_management.battles) - 1
+            }
         );
     }
 
-    public fun donate(vault_id: u64, side: bool, biuwu_coin: Coin<BiUwU>) acquires VaultManagement {
-        let vault_management = borrow_global_mut<VaultManagement>(@biuwu);
-        let vault = vector::borrow_mut(&mut vault_management.vaults, vault_id);
+    public fun attack(battle_id: u64, side: bool, biuwu_coin: Coin<BiUwU>) acquires BattleManagement {
+        let battle_management = borrow_global_mut<BattleManagement>(@biuwu);
+        let battle = vector::borrow_mut(&mut battle_management.battles, battle_id);
         let amount = coin::value(&biuwu_coin);
         if (side) {
-            vault.reserve_1 = vault.reserve_1 + amount;
+            battle.reserve_1 = battle.reserve_1 + amount;
         } else {
-            vault.reserve_0 = vault.reserve_0 + amount;
+            battle.reserve_0 = battle.reserve_0 + amount;
         };
         coin::deposit(@biuwu, biuwu_coin);
 
-        event::emit(
-            Donation { vault_id, side, amount }
-        );
+        event::emit(AttackPerformed { battle_id, side, amount });
     }
 
-    public entry fun stop_battle(caller: &signer, vault_id: u64) acquires VaultManagement {
-        let vault_management = borrow_global_mut<VaultManagement>(@biuwu);
-        let vault = vector::borrow_mut(&mut vault_management.vaults, vault_id);
-        
-        let winner = if (vault.reserve_0 > vault.reserve_1) {
-            vault.address_0
-        } else {
-            vault.address_1
-        };
-        let prize = vault.reserve_0 + vault.reserve_1;
+    public entry fun stop_battle(caller: &signer, battle_id: u64) acquires BattleManagement {
+        let battle_management = borrow_global_mut<BattleManagement>(@biuwu);
+        let battle = vector::borrow_mut(&mut battle_management.battles, battle_id);
 
-        coin::transfer<BiUwU> (caller, winner, prize);
-        vault.reserve_0 = 0;
-        vault.reserve_1 = 0;
+        let winner =
+            if (battle.reserve_0 > battle.reserve_1) {
+                battle.address_0
+            } else {
+                battle.address_1
+            };
+        let prize = battle.reserve_0 + battle.reserve_1;
 
-        event::emit(
-            BattleStopped { vault_id, winner, prize }
-        );
+        coin::transfer<BiUwU>(caller, winner, prize);
+        battle.reserve_0 = 0;
+        battle.reserve_1 = 0;
+
+        event::emit(BattleStopped { battle_id, winner, prize });
+    }
+
+    #[view]
+    public fun get_battle_info(battle_id: u64): (address, address, u64, u64) acquires BattleManagement {
+        let battle_management = borrow_global_mut<BattleManagement>(@biuwu);
+        let battle = vector::borrow_mut(&mut battle_management.battles, battle_id);
+        (battle.address_0, battle.address_1, battle.reserve_0, battle.reserve_1)
     }
 }

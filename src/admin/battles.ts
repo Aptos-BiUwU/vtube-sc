@@ -8,7 +8,7 @@ import { adminRouter } from "./index";
  * Starts a battle between two addresses.
  * @param coinAddress0 - The address of the first coin.
  * @param coinAddress1 - The address of the second coin.
- * @returns The vault ID of the battle.
+ * @returns The battle ID of the battle.
  */
 export async function startBattle(coinAddress0: string, coinAddress1: string) {
   const tx = await aptos.transaction.build.simple({
@@ -21,7 +21,7 @@ export async function startBattle(coinAddress0: string, coinAddress1: string) {
   const events = await submitTx(adminAccount, tx);
   for (const event of events) {
     if (event.type.includes("battles::BattleStarted")) {
-      return { vault_id: event.data.vault_id };
+      return { battle_id: event.data.battle_id };
     }
   }
 }
@@ -32,8 +32,8 @@ adminRouter.post("/startBattle", async (req: Request, res: Response) => {
     return res.status(StatusCodes.BAD_REQUEST).send("Missing required fields");
   }
   try {
-    const { vault_id } = (await startBattle(coinAddress0, coinAddress1))!;
-    return res.status(StatusCodes.OK).send({ vault_id });
+    const { battle_id } = (await startBattle(coinAddress0, coinAddress1))!;
+    return res.status(StatusCodes.OK).send({ battle_id });
   } catch (err) {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(err);
   }
@@ -41,14 +41,14 @@ adminRouter.post("/startBattle", async (req: Request, res: Response) => {
 
 /**
  * Stops a battle.
- * @param vaultId - The vault ID of the battle.
+ * @param battleId - The battle ID of the battle.
  */
-export async function stopBattle(vaultId: number) {
+export async function stopBattle(battleId: number) {
   const tx = await aptos.transaction.build.simple({
     sender: adminAddress,
     data: {
       function: `${adminAddress}::battles::stop_battle`,
-      functionArguments: [vaultId],
+      functionArguments: [battleId],
     },
   });
   const events = await submitTx(adminAccount, tx);
@@ -60,12 +60,12 @@ export async function stopBattle(vaultId: number) {
 }
 
 adminRouter.post("/stopBattle", async (req: Request, res: Response) => {
-  const { vaultId } = req.body;
-  if (vaultId == undefined) {
+  const { battleId } = req.body;
+  if (battleId == undefined) {
     return res.status(StatusCodes.BAD_REQUEST).send("Missing required fields");
   }
   try {
-    const result = await stopBattle(vaultId);
+    const result = await stopBattle(battleId);
     return res.status(StatusCodes.OK).send(result);
   } catch (err) {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(err);

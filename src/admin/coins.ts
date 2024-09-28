@@ -9,12 +9,13 @@ import {
 import { adminAccount, adminAddress } from "./init";
 import { Account } from "@aptos-labs/ts-sdk";
 import { readFile, writeFile } from "fs/promises";
-import { getRegisterBiUwUTx } from "../transactions";
+import { getRegisterBiUwUTxData } from "../transactions";
 import * as path from "path";
 import * as os from "os";
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { adminRouter } from "./index";
+import { InputEntryFunctionData } from "@aptos-labs/ts-sdk";
 
 export async function createCoin(name: string, symbol: string) {
   const coinAccount = Account.generate();
@@ -50,7 +51,10 @@ export async function createCoin(name: string, symbol: string) {
   });
   await writeFile("coin-accounts-list.json", JSON.stringify(jsonData, null, 2));
 
-  tx = await getRegisterBiUwUTx(coinAccount.accountAddress.toString());
+  tx = await aptos.transaction.build.simple({
+    sender: coinAccount.accountAddress,
+    data: getRegisterBiUwUTxData() as InputEntryFunctionData,
+  });
   await submitTx(coinAccount, tx);
 
   return {

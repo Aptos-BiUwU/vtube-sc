@@ -1,4 +1,7 @@
 import { aptos, submitTx, getAccountFromPrivateKey } from "../utils";
+import { Request, Response } from "express";
+import { StatusCodes } from "http-status-codes";
+import { adminRouter } from "./index";
 import * as dotenv from "dotenv";
 
 dotenv.config();
@@ -29,4 +32,23 @@ export async function initialize() {
     },
   });
   await submitTx(adminAccount, tx);
+
+  tx = await aptos.transaction.build.simple({
+    sender: adminAddress,
+    data: {
+      function: `${adminAddress}::campaigns::initialize`,
+      typeArguments: [],
+      functionArguments: [],
+    },
+  });
+  await submitTx(adminAccount, tx);
 }
+
+adminRouter.post("/initialize", async (req: Request, res: Response) => {
+  try {
+    await initialize();
+    return res.status(StatusCodes.OK).send("Initialized");
+  } catch (err) {
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(err);
+  }
+});
