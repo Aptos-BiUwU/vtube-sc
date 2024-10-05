@@ -51,4 +51,14 @@ module biuwu::scripts {
     public fun get_donation_info(campaign_id: u64, dst_addr: address): u64 {
         campaigns::get_donation_info(campaign_id, dst_addr)
     }
+
+    #[view]
+    public fun get_subscription_plan_info<CoinType>(): (vector<u64>, u64) {
+        subscriptions::get_subscription_plan_info<CoinType>()
+    }
+
+    #[view]
+    public fun get_subscription_info<CoinType>(dst_addr: address): (u64, u64, u64) {
+        subscriptions::get_subscription_info<CoinType>(dst_addr)
+    }
 }

@@ -65,9 +65,7 @@ module biuwu::subscriptions {
         };
         move_to(caller, subscription_plan);
 
-        event::emit(
-            SubscriptionPlanCreated<CoinType> { prices, period }
-        );
+        event::emit(SubscriptionPlanCreated<CoinType> { prices, period });
     }
 
     public entry fun update_subscription_plan<CoinType>(
@@ -79,9 +77,7 @@ module biuwu::subscriptions {
         subscription_plan.prices = prices;
         subscription_plan.period = period;
 
-        event::emit(
-            SubscriptionPlanUpdated<CoinType> { prices, period }
-        );
+        event::emit(SubscriptionPlanUpdated<CoinType> { prices, period });
     }
 
     public fun deposit<CoinType>(
@@ -94,9 +90,7 @@ module biuwu::subscriptions {
         *balance = *balance + amount;
         coin::deposit(@biuwu, biuwu_coin);
 
-        event::emit(
-            Deposit<CoinType> { dst_addr, amount }
-        );
+        event::emit(Deposit<CoinType> { dst_addr, amount });
     }
 
     public fun update_tier<CoinType>(dst_addr: address, new_tier: u64) acquires SubscriptionPlan {
@@ -128,9 +122,7 @@ module biuwu::subscriptions {
         *tier = new_tier;
         *start_time = timestamp::now_microseconds();
 
-        event::emit(
-            TierUpdated<CoinType> { dst_addr, new_tier }
-        );
+        event::emit(TierUpdated<CoinType> { dst_addr, new_tier });
     }
 
     #[view]
@@ -152,6 +144,30 @@ module biuwu::subscriptions {
                 subscription_plan.period
             );
         num_periods * *vector::borrow(&subscription_plan.prices, *tier) <= *balance
+    }
+
+    #[view]
+    public fun get_subscription_plan_info<CoinType>(): (vector<u64>, u64) acquires SubscriptionPlan {
+        let subscription_plan = borrow_global<SubscriptionPlan<CoinType>>(@biuwu);
+        (subscription_plan.prices, subscription_plan.period)
+    }
+
+    #[view]
+    public fun get_subscription_info<CoinType>(
+        dst_addr: address
+    ): (u64, u64, u64) acquires SubscriptionPlan {
+        let subscription_plan = borrow_global<SubscriptionPlan<CoinType>>(@biuwu);
+        let balance = table::borrow_with_default(
+            &subscription_plan.balances, dst_addr, &0
+        );
+        let tier = table::borrow_with_default(&subscription_plan.tiers, dst_addr, &0);
+        let start_time =
+            table::borrow_with_default(
+                &subscription_plan.start_times,
+                dst_addr,
+                &timestamp::now_microseconds()
+            );
+        (*balance, *tier, *start_time)
     }
 
     fun check_admin(caller: &signer) {
