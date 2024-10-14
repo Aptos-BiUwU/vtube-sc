@@ -132,6 +132,9 @@ module biuwu::subscriptions {
             &subscription_plan.balances, dst_addr, &0
         );
         let tier = table::borrow_with_default(&subscription_plan.tiers, dst_addr, &0);
+        if (*tier == 0) {
+            return false
+        };
         let start_time =
             table::borrow_with_default(
                 &subscription_plan.start_times,

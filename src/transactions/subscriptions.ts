@@ -1,9 +1,7 @@
-import { aptos } from "../utils";
 import { adminAddress } from "../admin";
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { transactionsRouter } from "./index";
-import { InputEntryFunctionData } from "@aptos-labs/ts-sdk";
 
 function getDepositTxData(coinAddress: string, amount: number) {
   return {
@@ -11,18 +9,6 @@ function getDepositTxData(coinAddress: string, amount: number) {
     functionArguments: [amount],
     typeArguments: [`${coinAddress}::vtuber_coin::VtuberCoin`],
   };
-}
-
-export async function getDepositTx(
-  userAddress: string,
-  coinAddress: string,
-  amount: number,
-) {
-  const tx = await aptos.transaction.build.simple({
-    sender: userAddress,
-    data: getDepositTxData(coinAddress, amount) as InputEntryFunctionData,
-  });
-  return tx;
 }
 
 transactionsRouter.post(
@@ -49,18 +35,6 @@ function getUpdateTierTxData(coinAddress: string, tier: number) {
     functionArguments: [tier],
     typeArguments: [`${coinAddress}::vtuber_coin::VtuberCoin`],
   };
-}
-
-export async function getUpdateTierTx(
-  userAddress: string,
-  coinAddress: string,
-  tier: number,
-) {
-  const tx = await aptos.transaction.build.simple({
-    sender: userAddress,
-    data: getUpdateTierTxData(coinAddress, tier) as InputEntryFunctionData,
-  });
-  return tx;
 }
 
 transactionsRouter.post(

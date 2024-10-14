@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { transactionsRouter } from "./index";
 
-function getRegisterCoinTxData(coinAddress: string) {
+export function getRegisterCoinTxData(coinAddress: string) {
   return {
     function: `0x1::managed_coin::register`,
     functionArguments: [],

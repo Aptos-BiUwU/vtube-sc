@@ -7,4 +7,4 @@ export * from "./subscriptions";
 export * from "./battles";
 export * from "./campaigns";
 export * from "./init";
-  
+export * from "./pools";
